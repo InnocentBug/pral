@@ -35,6 +35,7 @@ class _InputParamRange:
     external_field_A: tuple[float, float] = (-10.0, 10)
     external_field_B: tuple[float, float] = (-10.0, 10.0)
     external_field_C: tuple[float, float] = (-10.0, 10.0)
+    growth_factor: tuple[float, float] = (0, 1.0)
 
 
 @dataclass
@@ -50,6 +51,7 @@ class InputParam:
     external_field_A: float = -1.0
     external_field_B: float = 0
     external_field_C: float = 1.0
+    growth_factor: float = 0.1
 
     def to_numpy(self):
         self_dict = asdict(self)
@@ -103,10 +105,10 @@ class SystemParamter:
         DL = 1 / 7.0
         volume = 5.0
         if name == "small":
-            L = np.asarray([volume / (1 + 2 * DL), 1 + 2 * DL, 1.0])
+            L = np.asarray([volume / (1 + 2 * self.growth_factor), 1 + 2 * self.growth_factor, 1.0])
             NL = (np.asarray(L) / DL).astype(int)
         if name == "medium":
-            L = np.asarray([volume / (1 + DL), 1 + DL, 1.0])
+            L = np.asarray([volume / (1 + self.growth_factor), 1 + self.growth_factor, 1.0])
             NL = (np.asarray(L) / DL).astype(int)
         if name == "large":
             L = np.asarray([volume, 1, 1.0])
