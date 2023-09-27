@@ -234,12 +234,12 @@ def run_param(param):
         system = SystemParamter(name, param)
         system.write_soma_xml()
         sp.call(["../ConfGen.py", "-i", f"{name}.xml"])
-        sp.call(["../SOMA", "-c", f"{name}.h5", "-o", "0", "-t", "100000", "-f", "{name}_end.h5"])
+        sp.call(["../SOMA", "-c", f"{name}.h5", "-o", "0", "-t", "100000", "-f", f"{name}_end.h5"])
         sp.call(
             [
                 "../SOMA",
                 "-c",
-                "{name}_end.h5",
+                f"{name}_end.h5",
                 "-a",
                 f"{name}_ana.h5",
                 "-o",
@@ -247,7 +247,7 @@ def run_param(param):
                 "-t",
                 "100000",
                 "-f",
-                "{name}_end.h5",
+                f"{name}_end.h5",
             ]
         )
 
