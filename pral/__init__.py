@@ -3,6 +3,7 @@ import os
 import subprocess as sp
 from dataclasses import asdict, dataclass, fields
 from typing import Union
+import json
 
 import numpy as np
 
@@ -232,26 +233,29 @@ def run_param(param):
     os.mkdir("00_tmp_running")
     os.chdir("00_tmp_running")
 
+    with open("param.json", "w") as json_handle:
+        json.dump(asdict(param), json_handle, indent=2)
+
     for name in ("small", "medium", "large"):
         system = SystemParamter(name, param)
         system.write_soma_xml()
-        sp.call(["../ConfGen.py", "-i", f"{name}.xml"])
-        sp.call(["../SOMA", "-c", f"{name}.h5", "-o", "0", "-t", "100000", "-f", f"{name}_end.h5"])
-        sp.call(
-            [
-                "../SOMA",
-                "-c",
-                f"{name}_end.h5",
-                "-a",
-                f"{name}_ana.h5",
-                "-o",
-                "0",
-                "-t",
-                "100000",
-                "-f",
-                f"{name}_end.h5",
-            ]
-        )
+        # sp.call(["../ConfGen.py", "-i", f"{name}.xml"])
+        # sp.call(["../SOMA", "-c", f"{name}.h5", "-o", "0", "-t", "100000", "-f", f"{name}_end.h5"])
+        # sp.call(
+        #     [
+        #         "../SOMA",
+        #         "-c",
+        #         f"{name}_end.h5",
+        #         "-a",
+        #         f"{name}_ana.h5",
+        #         "-o",
+        #         "0",
+        #         "-t",
+        #         "100000",
+        #         "-f",
+        #         f"{name}_end.h5",
+        #     ]
+        # )
 
     os.chdir("..")
     os.rename("00_tmp_running", f"{param}")
