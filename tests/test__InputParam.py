@@ -17,10 +17,11 @@ def test_default_constructor():
     assert instance.external_field_A == -1.0
     assert instance.external_field_B == 0.0
     assert instance.external_field_C == 1.0
+    assert instance.growth_factor == 0.1
 
 
 def test_manual_constructor():
-    instance = pral.InputParam(32, 0.4, 4, 30.0, 10.5, 25, 40, 0.01, -2.0, 0.4, 2.1)
+    instance = pral.InputParam(32, 0.4, 4, 30.0, 10.5, 25, 40, 0.01, -2.0, 0.4, 2.1, -0.2)
     assert instance.N_diblock == 32
     assert instance.f_diblock == 0.4
     assert instance.N_homo == 4
@@ -32,11 +33,12 @@ def test_manual_constructor():
     assert instance.external_field_A == -2.0
     assert instance.external_field_B == 0.4
     assert instance.external_field_C == 2.1
+    assert instance.growth_factor == -0.2
 
 
 def test_from_numpy():
     instance = pral.InputParam.from_numpy(
-        np.asarray([32, 0.4, 4, 30.0, 10.5, 25, 40, 0.01, -2.0, 0.4, 2.1])
+        np.asarray([32, 0.4, 4, 30.0, 10.5, 25, 40, 0.01, -2.0, 0.4, 2.1, -0.2])
     )
     assert instance.N_diblock == 32
     assert instance.f_diblock == 0.4
@@ -49,10 +51,11 @@ def test_from_numpy():
     assert instance.external_field_A == -2.0
     assert instance.external_field_B == 0.4
     assert instance.external_field_C == 2.1
+    assert instance.growth_factor == -0.2
 
 
 def test_to_numpy():
-    array = np.asarray([32, 0.4, 4, 30.0, 10.5, 25, 40, 0.01, -2.0, 0.4, 2.1])
+    array = np.asarray([32, 0.4, 4, 30.0, 10.5, 25, 40, 0.01, -2.0, 0.4, 2.1, -0.2])
     instance = pral.InputParam.from_numpy(array)
     array2 = instance.to_numpy()
     assert np.all(array == array2)
