@@ -116,7 +116,7 @@ class SystemParamter:
             L = np.asarray([volume, 1.0, 1.0])
             NL = (np.asarray(L) / DL).astype(int)
         # Add for area 51
-        NL[2] += 1
+        NL[2] += 2
         self._system_param = SystemParamter._InternalSystemParam(
             name=name,
             n_homo=n_homo,
