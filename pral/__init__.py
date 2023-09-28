@@ -9,6 +9,8 @@ from typing import Union
 
 import numpy as np
 
+from .loss import get_density, get_fit_characteristics, get_loss, target_function
+
 
 class ParameterRangeException(Exception):
     def __init__(
