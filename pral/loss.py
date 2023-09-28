@@ -64,7 +64,7 @@ def get_small_a_loss(data):
 
     middle = data[1]
     middle_target_amplitude = 0.0
-    middle_target_period = 2.0
+    # middle_target_period = 2.0
     (
         middle_x,
         middle_fit,
@@ -115,7 +115,7 @@ def get_small_b_loss(data):
 
     middle = data[1]
     middle_target_amplitude = 0.0
-    middle_target_period = 2.0
+    # middle_target_period = 2.0
     (
         middle_x,
         middle_fit,
@@ -166,7 +166,6 @@ def get_small_c_loss(data):
 
     middle = data[1]
     middle_target_amplitude = 0.0
-    middle_target_period = 2.0
     (
         middle_x,
         middle_fit,
@@ -306,7 +305,7 @@ def get_medium_b_loss(data):
 def get_medium_c_loss(data):
     bottom = data[1]
     bottom_target_amplitude = 0.0
-    bottom_target_period = 2.0
+    # bottom_target_period = 2.0
     (
         bottom_x,
         bottom_fit,
@@ -339,7 +338,6 @@ def get_medium_c_loss(data):
 
     top = data[2]
     top_target_amplitude = 0.0
-    top_target_period = 2.0
     top_x, top_fit, top_err, top_msd, top_amplitude, top_period = get_fit_characteristics(top)
 
     top_loss = top_err + top_msd + (top_amplitude - top_target_amplitude) ** 2
@@ -458,7 +456,7 @@ def get_large_b_loss(data):
 def get_large_c_loss(data):
     bottom = data[1]
     bottom_target_amplitude = 0.0
-    bottom_target_period = 2.0
+    # bottom_target_period = 2.0
     (
         bottom_x,
         bottom_fit,
@@ -491,7 +489,7 @@ def get_large_c_loss(data):
 
     top = data[2]
     top_target_amplitude = 0.0
-    top_target_period = 2.0
+    # top_target_period = 2.0
     top_x, top_fit, top_err, top_msd, top_amplitude, top_period = get_fit_characteristics(top)
 
     top_loss = top_err + top_msd + (top_amplitude - top_target_amplitude) ** 2
