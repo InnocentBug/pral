@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+import json
 import os
 import subprocess as sp
 from dataclasses import asdict, dataclass, fields
 from typing import Union
-import json
 
 import numpy as np
 
@@ -39,7 +39,7 @@ class _InputParamRange:
     growth_factor: tuple[float, float] = (-0.4, 1.0)
 
 
-@dataclass
+@dataclass(frozen=True)
 class InputParam:
     N_diblock: int = 64
     f_diblock: float = 8 / 64
@@ -61,7 +61,8 @@ class InputParam:
     @staticmethod
     def from_numpy(numpy_array):
         instance = InputParam()
-        assert len(asdict(instance)) == len(numpy_array)
+        if len(asdict(instance)) != len(numpy_array):
+            raise RuntimeError("Invalid Numpy array length.")
         return InputParam(*numpy_array)
 
     def __post_init__(self):
@@ -236,25 +237,35 @@ def run_param(param):
     with open("param.json", "w") as json_handle:
         json.dump(asdict(param), json_handle, indent=2)
 
+    acc_flag = ["-o", "0"]
+
     for name in ("small", "medium", "large"):
         system = SystemParamter(name, param)
         system.write_soma_xml()
-        sp.call(["../ConfGen.py", "-i", f"{name}.xml"])
-        sp.call(["../SOMA", "-c", f"{name}.h5", "-o", "0", "-t", "100000", "-f", f"{name}_end.h5"])
-        sp.call(
+        sp.check_call(["../ConfGen.py", "-i", f"{name}.xml"])
+        try:
+            sp.check_call(
+                ["../SOMA", "-c", f"{name}.h5", "-t", "100000", "-f", f"{name}_end.h5"] + acc_flag
+            )
+        except sp.CalledProcessError:
+            acc_flag = ["-n", "8"]
+            sp.check_call(
+                ["../SOMA", "-c", f"{name}.h5", "-t", "100000", "-f", f"{name}_end.h5"] + acc_flag
+            )
+
+        sp.check_call(
             [
                 "../SOMA",
                 "-c",
                 f"{name}_end.h5",
                 "-a",
                 f"{name}_ana.h5",
-                "-o",
-                "0",
                 "-t",
                 "100000",
                 "-f",
                 f"{name}_end.h5",
             ]
+            + acc_flag,
         )
 
     os.chdir("..")
