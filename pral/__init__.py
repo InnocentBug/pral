@@ -182,7 +182,7 @@ class SystemParamter:
         xml_string += "  </nxyz>\n"
         xml_string += "  <poly_arch>\n"
         xml_string += f"    {self.n_diblock} " + "A{" + str(self.NA) + "}B{" + str(self.NB) + "}\n"
-        xml_string += f"    {self.n_homo} " + "C{" + str(self.N_homo) + "}\n"
+        xml_string += f"    {self.n_homo} " + "C{" + str(int(self.N_homo)) + "}\n"
         xml_string += "  </poly_arch>\n"
         xml_string += "  <analysis>\n"
         xml_string += "    <Re>\n"
