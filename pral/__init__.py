@@ -43,7 +43,7 @@ class _InputParamRange:
     growth_factor: tuple[float, float] = (-0.4, 1.0)
 
 
-@dataclass(frozen=True)
+@dataclass
 class InputParam:
     N_diblock: int = 64
     f_diblock: float = 8 / 64
@@ -78,6 +78,7 @@ class InputParam:
                 raise ParameterRangeException(field.name, value, limit)
             if value > limit[1]:
                 raise ParameterRangeException(field.name, value, limit)
+            setattr(self, field.name, field.type(value))
 
 
 class SystemParamter:

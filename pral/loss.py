@@ -34,10 +34,17 @@ def target_function(x, amplitude, period, shift):
 def get_fit_characteristics(rho):
     x = np.linspace(0, len(rho) * 1 / 7.0, len(rho))
 
-    param, cov = curve_fit(target_function, x, rho, p0=[1.0, 2.0, 0.0])
-    fit = target_function(x, *param)
-    err = np.sum(np.sqrt(np.diag(cov)))
-    msd = np.average((rho - fit) ** 2)
+    try:
+        param, cov = curve_fit(target_function, x, rho, p0=[1.0, 2.0, 0.0])
+    except RuntimeError:
+        fit = np.zeros(x.shape) / 0
+        err = 100000
+        msd = 100000
+        param = [0, 0]
+    else:
+        fit = target_function(x, *param)
+        err = np.sum(np.sqrt(np.diag(cov)))
+        msd = np.average((rho - fit) ** 2)
 
     return x, fit, err, msd, param[0], param[1]
 
