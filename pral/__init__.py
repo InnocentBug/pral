@@ -13,18 +13,15 @@ from .loss import get_density, get_fit_characteristics, get_loss, target_functio
 
 
 class ParameterRangeException(Exception):
-    def __init__(
-        self,
-        name: str,
-        value: Union[float, int],
-        limit: Union[tuple[int, int], tuple[float, float]],
-    ):
-        self.name = name
-        self.value = value
-        self.limit = limit
+    def __init__(self, broken_elements: list, fixed_param):
+        self.broken_elements = broken_elements
+        self.fixed_param = fixed_param
 
     def __str__(self):
-        return f"{self.name} parameter {self.value} out of range {self.limit}"
+        error_string = ""
+        for element in self.broken_elements:
+            error_string += f"{element[0]} parameter {element[1]} out of range {element[2]}; "
+        return error_string
 
 
 @dataclass(frozen=True)
@@ -71,14 +68,22 @@ class InputParam:
 
     def __post_init__(self):
         validator = _InputParamRange()
+        fixed_dict = {}
+        broken_field = []
         for field in fields(self):
             limit = getattr(validator, field.name)
-            value = getattr(self, field.name)
+            value = field.type(getattr(self, field.name))
+            setattr(self, field.name, value)
+            fixed_dict[field.name] = value
             if value < limit[0]:
-                raise ParameterRangeException(field.name, value, limit)
+                fixed_dict[field.name] = limit[0]
+                broken_field.append((field.name, value, limit))
             if value > limit[1]:
-                raise ParameterRangeException(field.name, value, limit)
-            setattr(self, field.name, field.type(value))
+                fixed_dict[field.name] = limit[1]
+                broken_field.append((field.name, value, limit))
+        if len(broken_field) > 0:
+            fixed_param = InputParam(**fixed_dict)
+            raise ParameterRangeException(broken_field, fixed_param)
 
 
 class SystemParamter:
@@ -247,7 +252,7 @@ def run_param(param):
     for name in ("small", "medium", "large"):
         system = SystemParamter(name, param)
         system.write_soma_xml()
-        sp.check_call(["../ConfGen.py", "-i", f"{name}.xml"])
+        sp.check_call(["python", "../ConfGen.py", "-i", f"{name}.xml"])
         try:
             sp.check_call(
                 ["../SOMA", "-c", f"{name}.h5", "-t", "100000", "-f", f"{name}_end.h5"] + acc_flag

@@ -63,7 +63,7 @@ def test_to_numpy():
 
 def test_range_check():
     with pytest.raises(pral.ParameterRangeException):
-        pral.InputParam(N_diblock=10)
+        pral.InputParam(f_diblock=0.01)
 
     with pytest.raises(pral.ParameterRangeException):
         pral.InputParam(N_diblock=5000)
