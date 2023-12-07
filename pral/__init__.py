@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # trunk-disable-all(ruff/F401)
 
+import hashlib
 import json
 import os
 import subprocess as sp
@@ -37,7 +38,7 @@ class _InputParamRange:
     external_field_A: tuple[float, float] = (-10.0, 10)
     external_field_B: tuple[float, float] = (-10.0, 10.0)
     external_field_C: tuple[float, float] = (-10.0, 10.0)
-    growth_factor: tuple[float, float] = (-0.4, 1.0)
+    growth_factor: tuple[float, float] = (-0.2, 1.0)
 
 
 @dataclass
@@ -72,7 +73,7 @@ class InputParam:
         broken_field = []
         for field in fields(self):
             limit = getattr(validator, field.name)
-            value = field.type(getattr(self, field.name))
+            value = field.type(np.round(getattr(self, field.name), 3))
             setattr(self, field.name, value)
             fixed_dict[field.name] = value
             if value < limit[0]:
@@ -279,4 +280,7 @@ def run_param(param):
         )
 
     os.chdir("..")
-    os.rename("00_tmp_running", f"{param}")
+    hash_msg = hashlib.sha1("my message".encode("UTF-8")).hexdigest()
+    hash_msg = hash_msg[:10]
+    os.rename("00_tmp_running", f"InputParamHash-{hash_msg}")
+    return f"InputParamHash-{hash_msg}"
