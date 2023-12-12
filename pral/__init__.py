@@ -241,7 +241,28 @@ class SystemParamter:
             file_handle.write(self.get_soma_xml_str())
 
 
+def get_loss_from_dir(data_dir):
+    cwd = os.getcwd()
+    try:
+        os.chdir(data_dir)
+        loss = [get_loss("small"), get_loss("medium"), get_loss("large")]
+        loss += [np.sum(loss)]
+    finally:
+        os.chdir(cwd)
+    return loss
+
+
 def run_param(param):
+    hash_msg = hashlib.sha1(str(param).encode("UTF-8")).hexdigest()
+    hash_msg = hash_msg[:10]
+    final_name = f"InputParamHash-{hash_msg}"
+    try:
+        loss = get_loss_from_dir(final_name)
+    except OSError:
+        pass
+    else:
+        return final_name, loss
+
     os.mkdir("00_tmp_running")
     os.chdir("00_tmp_running")
 
@@ -280,7 +301,6 @@ def run_param(param):
         )
 
     os.chdir("..")
-    hash_msg = hashlib.sha1("my message".encode("UTF-8")).hexdigest()
-    hash_msg = hash_msg[:10]
-    os.rename("00_tmp_running", f"InputParamHash-{hash_msg}")
-    return f"InputParamHash-{hash_msg}"
+    os.rename("00_tmp_running", final_name)
+    loss = get_loss_from_dir(final_name)
+    return f"InputParamHash-{hash_msg}", loss
