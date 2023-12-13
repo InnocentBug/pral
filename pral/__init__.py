@@ -6,7 +6,6 @@ import json
 import os
 import subprocess as sp
 from dataclasses import asdict, dataclass, fields
-from typing import Union
 
 import numpy as np
 
@@ -252,10 +251,15 @@ def get_loss_from_dir(data_dir):
     return loss
 
 
-def run_param(param):
+def get_hash_name(param):
     hash_msg = hashlib.sha1(str(param).encode("UTF-8")).hexdigest()
     hash_msg = hash_msg[:10]
     final_name = f"InputParamHash-{hash_msg}"
+    return final_name
+
+
+def run_param(param):
+    final_name = get_hash_name(param)
     try:
         loss = get_loss_from_dir(final_name)
     except OSError:
@@ -303,4 +307,4 @@ def run_param(param):
     os.chdir("..")
     os.rename("00_tmp_running", final_name)
     loss = get_loss_from_dir(final_name)
-    return f"InputParamHash-{hash_msg}", loss
+    return final_name
