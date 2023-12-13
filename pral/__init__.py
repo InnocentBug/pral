@@ -307,4 +307,4 @@ def run_param(param):
     os.chdir("..")
     os.rename("00_tmp_running", final_name)
     loss = get_loss_from_dir(final_name)
-    return final_name
+    return final_name, loss
